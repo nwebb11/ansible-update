@@ -1,0 +1,73 @@
+---
+
+- name: Update cache & packages - (APT)
+  become: yes
+  block:
+
+    - name: Update APT cache - (APT)
+      ansible.builtin.apt:
+        update_cache: yes
+        force_apt_get: yes
+      ansible.builtin.register: update_cache_output
+
+    - name: Output cache update - (APT)
+      ansible.builtin.debug:
+        msg: "{{ update_cache_output }}"
+
+    - name: Update all packages to latest version - (APT)
+      ansible.builtin.apt:
+        name: "*"
+        state: latest
+        force_apt_get: yes
+      ansible.builtin.register: update_package_output
+
+    - name: Output package update(s) - (APT)
+      ansible.builtin.debug:
+        msg: "{{ update_package_output }}"
+
+  when: ansible_facts['os_family'] == "Debian"
+
+- name: Clean cache & dependencies - (APT)
+  become: yes
+  block:
+
+    - name: Remove useless packages from the cache - (APT)
+      ansible.builtin.apt:
+        autoclean: yes
+        force_apt_get: yes
+      ansible.builtin.register: clean_cache_output
+
+    - name: Output cache clean - (APT)
+      ansible.builtin.debug:
+        msg: "{{ clean_cache_output }}"
+
+    - name: Remove dependencies that are no longer required - (APT)
+      ansible.builtin.apt:
+        autoremove: yes
+        force_apt_get: yes
+      ansible.builtin.register: remove_package_output
+
+    - name: Output package removal - (APT)
+      ansible.builtin.debug:
+        msg: "{{ remove_package_output }}"
+
+  when: ansible_facts['os_family'] == "Debian"
+
+- name: Reboot if required - (APT)
+  become: yes
+  block:
+
+    - name: Check if a reboot is required - (APT)
+      ansible.builtin.register: reboot_required_file
+      ansible.builtin.stat: path=/var/run/reboot-required
+
+    - name: Reboot server - (APT)
+      ansible.builtin.reboot:
+        connect_timeout: 5
+        reboot_timeout: 300
+        pre_reboot_delay: 0
+        post_reboot_delay: 30
+        test_command: uptime
+      when: reboot_required_file.stat.exists
+
+  when: ansible_facts['os_family'] == "Debian"
