@@ -1,0 +1,25 @@
+---
+- name: Clean cache & dependencies - (APT)
+  block:
+
+    - name: Remove useless packages from the cache - (APT)
+      apt:
+        autoclean: yes
+        force_apt_get: yes
+      register: clean_cache_output
+
+    - name: Output cache clean - (APT)
+      ansible.builtin.debug:
+        msg: "{{ clean_cache_output }}"
+
+    - name: Remove dependencies that are no longer required - (APT)
+      apt:
+        autoremove: yes
+        force_apt_get: yes
+      register: remove_package_output
+
+    - name: Output package removal - (APT)
+      ansible.builtin.debug:
+        msg: "{{ remove_package_output }}"
+
+  when: ansible_facts['os_family'] == "Debian"

@@ -1,0 +1,26 @@
+---
+- name: Update cache & packages - (APT)
+  block:
+
+    - name: Update APT cache - (APT)
+      apt:
+        update_cache: yes
+        force_apt_get: yes
+      register: update_cache_output
+
+    - name: Output cache update - (APT)
+      ansible.builtin.debug:
+        msg: "{{ update_cache_output }}"
+
+    - name: Update all packages to latest version - (APT)
+      apt:
+        name: "*"
+        state: latest
+        force_apt_get: yes
+      register: update_package_output
+
+    - name: Output package update(s) - (APT)
+      ansible.builtin.debug:
+        msg: "{{ update_package_output }}"
+
+  when: ansible_facts['os_family'] == "Debian"

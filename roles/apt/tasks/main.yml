@@ -1,0 +1,9 @@
+---
+- name: Update - (APT)
+  import_tasks: update.yml
+
+- name: Clean - (APT)
+  import_tasks: clean.yml
+
+- name: Reboot - (APT)
+  import_tasks: reboot.yml
