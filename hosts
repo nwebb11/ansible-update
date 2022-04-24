@@ -1,14 +1,10 @@
 [all]
-#define hostname/ip of each node
 master1 ansible_host=192.168.0.180
 master2 ansible_host=192.168.0.181
 master3 ansible_host=192.168.0.182
 
 [all:vars]
-#ansible machine host user
 ansible_user=kube
-#ssh key location, should be copy on to each node before hand
-ansible_ssh_private_key_file=/home/njhw/.ssh/id_rsa
-#set the ansible interpreter, should always be python3
-ansible_python_interpreter=/usr/bin/python3
-host_key_checking=True
+#ansible_ssh_private_key_file=/home/njhw/.ssh/id_rsa
+#ansible_python_interpreter=/usr/bin/python3
+#host_key_checking=True
